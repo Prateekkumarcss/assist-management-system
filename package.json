@@ -1,0 +1,13 @@
+{
+  "name": "assist-management-system",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.9.0"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "test": "node --test"
+  }
+}
