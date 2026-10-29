@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assist Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="login-view" id="loginView">
+        <form class="login-panel" id="loginForm">
+            <p class="login-brand">Assist<span>MS</span></p>
+            <h1>Sign in</h1>
+            <p class="login-copy">Use your administrator account to continue.</p>
+            <label for="username">Username</label>
+            <input id="username" name="username" autocomplete="username" required>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password"
+                autocomplete="current-password" required>
+            <p class="login-error" id="loginError" role="alert" hidden></p>
+            <button type="submit" id="loginButton">Sign in</button>
+        </form>
+    </main>
+
+    <div class="app-shell" id="appShell" hidden>
+    <aside class="sidebar">
+        <h2>Assist<span>MS</span></h2>
+        <p class="nav-label">MAIN MENU</p>
+        <nav>
+            <a href="#dashboard" class="active">Dashboard</a>
+            <a href="#requests">Assistance Requests</a>
+            <a href="#new-request">Create Request</a>
+        </nav>
+        <p class="sidebar-footer">College Project</p>
+    </aside>
+
+    <main class="main-content" id="dashboard">
+        <header class="topbar">
+            <div>
+                <h1>Dashboard</h1>
+                <p>Manage your assistance requests</p>
+            </div>
+            <div class="account-actions">
+                <span class="user-tag" id="userTag"></span>
+                <button class="logout-button" id="logoutButton" type="button">Sign out</button>
+            </div>
+        </header>
+
+        <section class="stats">
+            <article class="stat-card">
+                <p>Total Requests</p>
+                <h2 id="totalCount">0</h2>
+            </article>
+            <article class="stat-card">
+                <p>Pending Requests</p>
+                <h2 id="pendingCount">0</h2>
+            </article>
+            <article class="stat-card">
+                <p>Completed Requests</p>
+                <h2 id="completedCount">0</h2>
+            </article>
+        </section>
+
+        <section class="panel" id="new-request">
+            <h2>Create Assistance Request</h2>
+            <form id="requestForm">
+                <label for="requester">Your name</label>
+                <input id="requester" type="text"
+                    placeholder="Enter your name" required>
+
+                <label for="requestTitle">Request title</label>
+                <input id="requestTitle" type="text"
+                    placeholder="e.g. Need help with a project" required>
+
+                <label for="priority">Priority</label>
+                <select id="priority">
+                    <option>Low</option>
+                    <option selected>Medium</option>
+                    <option>High</option>
+                </select>
+
+                <button type="submit">Add Request</button>
+            </form>
+        </section>
+
+        <section class="panel" id="requests">
+            <h2>Assistance Requests</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Requester</th>
+                            <th>Request</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requestList">
+                        <tr>
+                            <td colspan="5">No requests yet. Add one above.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

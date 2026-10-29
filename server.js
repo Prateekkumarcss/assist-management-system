@@ -1,77 +1,17 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import path from "node:path";
+import { Readable } from "node:stream";
 import { fileURLToPath } from "node:url";
+import {
+    handleLogin,
+    handleSession,
+    validateAuthConfiguration
+} from "./lib/auth.js";
 
 const port = Number(process.env.PORT) || 3000;
-const { LOGIN_USERNAME, LOGIN_PASSWORD, JWT_SECRET } = process.env;
 const projectDirectory = path.dirname(fileURLToPath(import.meta.url));
-
-if (!LOGIN_USERNAME || !LOGIN_PASSWORD || !JWT_SECRET || Buffer.byteLength(JWT_SECRET) < 32) {
-    console.error("Set LOGIN_USERNAME, LOGIN_PASSWORD, and a JWT_SECRET of at least 32 bytes in .env.");
-    process.exit(1);
-}
-
-function createToken(username) {
-    const issuedAt = Math.floor(Date.now() / 1000);
-    const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url");
-    const payload = Buffer.from(JSON.stringify({
-        sub: username,
-        iat: issuedAt,
-        exp: issuedAt + 3600
-    })).toString("base64url");
-    const signingInput = `${header}.${payload}`;
-    const signature = createHmac("sha256", JWT_SECRET)
-        .update(signingInput)
-        .digest("base64url");
-
-    return `${signingInput}.${signature}`;
-}
-
-function verifyToken(token) {
-    const parts = token.split(".");
-    if (parts.length !== 3) return null;
-
-    const [headerPart, payloadPart, signaturePart] = parts;
-    const expectedSignature = createHmac("sha256", JWT_SECRET)
-        .update(`${headerPart}.${payloadPart}`)
-        .digest();
-    const actualSignature = Buffer.from(signaturePart, "base64url");
-
-    if (actualSignature.length !== expectedSignature.length ||
-        !timingSafeEqual(actualSignature, expectedSignature)) return null;
-
-    try {
-        const header = JSON.parse(Buffer.from(headerPart, "base64url").toString());
-        const payload = JSON.parse(Buffer.from(payloadPart, "base64url").toString());
-        if (header.alg !== "HS256" || typeof payload.sub !== "string" ||
-            !Number.isFinite(payload.exp) || payload.exp <= Date.now() / 1000) {
-            return null;
-        }
-        return payload;
-    } catch {
-        return null;
-    }
-}
-
-function sendJson(response, statusCode, data) {
-    response.writeHead(statusCode, { "Content-Type": "application/json; charset=utf-8" });
-    response.end(JSON.stringify(data));
-}
-
-async function readJsonBody(request) {
-    let body = "";
-
-    for await (const chunk of request) {
-        body += chunk;
-        if (Buffer.byteLength(body) > 10_240) {
-            throw new Error("Request body too large");
-        }
-    }
-
-    return JSON.parse(body);
-}
+const publicDirectory = path.join(projectDirectory, "public");
 
 const staticFiles = {
     "/": ["index.html", "text/html; charset=utf-8"],
@@ -80,42 +20,62 @@ const staticFiles = {
     "/script.js": ["script.js", "text/javascript; charset=utf-8"]
 };
 
-const server = createServer(async (request, response) => {
-    if (request.method === "GET" && request.url === "/api/session") {
-        const authorization = request.headers.authorization || "";
-        const token = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
-        const session = verifyToken(token);
+try {
+    validateAuthConfiguration();
+} catch (error) {
+    console.error(`${error.message} Add them to .env for local development.`);
+    process.exit(1);
+}
 
-        if (!session) return sendJson(response, 401, { error: "Invalid or expired session." });
-        return sendJson(response, 200, { username: session.sub, expiresAt: session.exp });
+async function dispatchApi(request, response, handler) {
+    const headers = new Headers();
+    for (const name of ["authorization", "content-length", "content-type"]) {
+        const value = request.headers[name];
+        if (value) headers.set(name, value);
     }
 
-    if (request.method === "POST" && request.url === "/api/login") {
+    const hasBody = request.method !== "GET" && request.method !== "HEAD";
+    const webRequest = new Request(new URL(request.url, "http://localhost"), {
+        method: request.method,
+        headers,
+        ...(hasBody ? { body: Readable.toWeb(request), duplex: "half" } : {})
+    });
+    const webResponse = await handler(webRequest);
+    const responseBody = Buffer.from(await webResponse.arrayBuffer());
+
+    response.writeHead(webResponse.status, Object.fromEntries(webResponse.headers));
+    response.end(responseBody);
+}
+
+const server = createServer(async (request, response) => {
+    const pathname = new URL(request.url, "http://localhost").pathname;
+
+    if (pathname === "/api/login" || pathname === "/api/session") {
+        const handler = pathname === "/api/login" ? handleLogin : handleSession;
         try {
-            const body = await readJsonBody(request);
-            const { username, password } = body ?? {};
-
-            if (username !== LOGIN_USERNAME || password !== LOGIN_PASSWORD) {
-                return sendJson(response, 401, { error: "Invalid username or password." });
-            }
-
-            return sendJson(response, 200, {
-                token: createToken(LOGIN_USERNAME),
-                tokenType: "Bearer",
-                expiresIn: 3600
-            });
-        } catch {
-            return sendJson(response, 400, { error: "Invalid JSON request." });
+            return await dispatchApi(request, response, handler);
+        } catch (error) {
+            console.error("Unable to process local API request.", error);
+            response.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+            return response.end(JSON.stringify({ error: "Authentication service is unavailable." }));
         }
     }
 
-    const file = staticFiles[request.url];
+    const file = staticFiles[pathname];
     if (request.method === "GET" && file) {
-        response.writeHead(200, { "Content-Type": file[1] });
-        return response.end(await readFile(path.join(projectDirectory, file[0])));
+        try {
+            const contents = await readFile(path.join(publicDirectory, file[0]));
+            response.writeHead(200, { "Content-Type": file[1] });
+            return response.end(contents);
+        } catch (error) {
+            console.error(`Unable to serve ${pathname}.`, error);
+            response.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+            return response.end(JSON.stringify({ error: "Unable to serve this page." }));
+        }
     }
 
-    return sendJson(response, 404, { error: "Not found." });
+    response.writeHead(404, { "Content-Type": "application/json; charset=utf-8" });
+    response.end(JSON.stringify({ error: "Not found." }));
 });
 
 server.listen(port, () => {
