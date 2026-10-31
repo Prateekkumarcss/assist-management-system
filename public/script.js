@@ -62,6 +62,9 @@ async function showDashboard(token) {
     document.getElementById("profileSignInMethod").textContent = session.id ? "Username or email and password" : "Environment-configured credentials";
     document.getElementById("sidebarRole").textContent = session.id ? "Member" : "Administrator";
     document.getElementById("profileRequestStorage").textContent = session.id ? "Account database" : "This browser only";
+    document.getElementById("notificationScopeDescription").textContent = session.id
+        ? "Notifications are stored in this browser and separated by signed-in account."
+        : "Notifications are stored only in this browser for the administrator workspace.";
     document.getElementById("requestStorageDescription").textContent = session.id
         ? "Requests are stored in the account database and are only visible to this account."
         : "Requests for the environment-configured administrator remain in this browser.";
@@ -762,4 +765,3 @@ if (storedToken) {
 } else {
     showLogin();
 }
-

@@ -454,7 +454,8 @@ test("dashboard creates, persists, completes, reopens, and logs out requests", a
             "notificationEmpty", "recentEmpty", "requestEmpty", "requestEmptyTitle",
             "requestEmptyCopy", "viewDashboard", "viewRequests", "viewCreate", "viewAnalytics",
             "viewNotifications", "viewProfile", "viewSettings", "statusChart", "analyticsStatusChart", "priorityChart",
-            "analyticsPriorityChart", "activityChart", "activityNote", "pageTitle", "pageEyebrow"
+            "analyticsPriorityChart", "activityChart", "activityNote", "pageTitle", "pageEyebrow",
+            "notificationScopeDescription"
         ];
         ids.forEach(id => elements.set(id, new FakeElement()));
 
@@ -565,6 +566,7 @@ test("dashboard creates, persists, completes, reopens, and logs out requests", a
     await elements.get("loginForm").listeners.submit({ preventDefault() {} });
     assert.equal(elements.get("appShell").hidden, false);
     assert.equal(elements.get("topUsername").textContent, username);
+    assert.match(elements.get("notificationScopeDescription").textContent, /only in this browser/i);
     assert.equal(browser.sessionStorage.getItem("assistToken"), token);
     elements.get("quickSearch").value = "Alex";
     elements.get("quickSearch").listeners.input();
