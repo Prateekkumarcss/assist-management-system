@@ -4,110 +4,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assist Management System</title>
+    <meta name="theme-color" content="#f4f6fa">
+    <title>AssistMS | Request management</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <main class="login-view" id="loginView">
-        <form class="login-panel" id="loginForm">
-            <p class="login-brand">Assist<span>MS</span></p>
-            <h1>Sign in</h1>
-            <p class="login-copy">Use your administrator account to continue.</p>
-            <label for="username">Username</label>
-            <input id="username" name="username" autocomplete="username" required>
-            <label for="password">Password</label>
-            <input id="password" name="password" type="password"
-                autocomplete="current-password" required>
-            <p class="login-error" id="loginError" role="alert" hidden></p>
-            <button type="submit" id="loginButton">Sign in</button>
-        </form>
+    <main class="auth-layout" id="loginView">
+        <section class="auth-intro" aria-label="AssistMS introduction">
+            <a class="brand brand-light" href="#login" aria-label="AssistMS home">
+                <span class="brand-mark" aria-hidden="true">A</span>
+                <span>Assist<span class="brand-accent">MS</span></span>
+            </a>
+            <div class="intro-copy">
+                <p class="eyebrow">ASSISTANCE, ORGANIZED</p>
+                <h1>Make every request<br>easier to manage.</h1>
+                <p>A clear workspace for tracking the help your team needs, from first request to resolution.</p>
+            </div>
+            <div class="intro-foot"><span class="intro-rule"></span>One focused place to move work forward</div>
+        </section>
+
+        <section class="auth-side">
+            <form class="auth-panel" id="loginForm">
+                <p class="eyebrow" id="authEyebrow">WELCOME BACK</p>
+                <h2 id="authTitle">Sign in to AssistMS</h2>
+                <p class="auth-copy" id="authCopy">Use your administrator account to continue.</p>
+                <div class="auth-tabs" role="tablist" aria-label="Account access">
+                    <button class="auth-tab active" id="signInTab" type="button" role="tab" aria-selected="true">Sign in</button>
+                    <button class="auth-tab" id="createAccountTab" type="button" role="tab" aria-selected="false">Create account</button>
+                </div>
+                <div class="auth-fields" id="signInFields">
+                    <label for="username">Username or email</label>
+                    <input id="username" name="username" autocomplete="username" placeholder="Your username or email" required>
+                    <label for="password">Password</label>
+                    <div class="password-field">
+                        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Your password" required>
+                        <button class="text-button password-toggle" id="togglePassword" type="button" aria-label="Show password">Show</button>
+                    </div>
+                </div>
+                <p class="login-error" id="loginError" role="alert" hidden></p>
+                <p class="registration-notice" id="loginSuccess" role="status" hidden></p>
+                <button class="primary-button auth-submit" type="submit" id="loginButton"><span id="loginButtonText">Sign in</span></button>
+                <p class="auth-footnote" id="authFootnote">Protected administrator access</p>
+            </form>
+
+            <section class="auth-panel create-panel" id="createAccountPanel" hidden>
+                <p class="eyebrow">GET STARTED</p>
+                <h2>Create an account</h2>
+                <p class="auth-copy">Set up your AssistMS profile.</p>
+                <form id="createAccountForm" class="auth-fields">
+                    <label for="newFullName">Full name</label>
+                    <input id="newFullName" autocomplete="name" placeholder="Your full name" required>
+                    <label for="newUsername">Username</label>
+                    <input id="newUsername" autocomplete="username" placeholder="Choose a username" required>
+                    <label for="newEmail">Email address</label>
+                    <input id="newEmail" type="email" autocomplete="email" placeholder="you@example.com" required>
+                    <label for="newPassword">Password</label>
+                    <input id="newPassword" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" required>
+                    <label for="confirmPassword">Confirm password</label>
+                    <input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Enter password again" required>
+                    <p class="registration-notice" id="registrationNotice" role="status">Checking account database availability...</p>
+                    <p class="login-error" id="registrationError" role="alert" hidden></p>
+                    <button class="primary-button auth-submit" id="createAccountButton" type="submit" disabled>Create account</button>
+                </form>
+            </section>
+            <p class="auth-legal">AssistMS <span aria-hidden="true">·</span> Request management workspace</p>
+        </section>
     </main>
 
     <div class="app-shell" id="appShell" hidden>
-    <aside class="sidebar">
-        <h2>Assist<span>MS</span></h2>
-        <p class="nav-label">MAIN MENU</p>
-        <nav>
-            <a href="#dashboard" class="active">Dashboard</a>
-            <a href="#requests">Assistance Requests</a>
-            <a href="#new-request">Create Request</a>
-        </nav>
-        <p class="sidebar-footer">College Project</p>
-    </aside>
-
-    <main class="main-content" id="dashboard">
-        <header class="topbar">
-            <div>
-                <h1>Dashboard</h1>
-                <p>Manage your assistance requests</p>
+        <button class="sidebar-backdrop" id="sidebarBackdrop" type="button" aria-label="Close navigation" hidden></button>
+        <aside class="sidebar" id="sidebar">
+            <a class="brand sidebar-brand" href="#dashboard" aria-label="AssistMS dashboard">
+                <span class="brand-mark" aria-hidden="true">A</span>
+                <span>Assist<span class="brand-accent">MS</span></span>
+            </a>
+            <p class="nav-label">WORKSPACE</p>
+            <nav class="primary-nav" aria-label="Main navigation">
+                <a href="#dashboard" class="nav-link active" id="navDashboard"><span class="nav-icon" aria-hidden="true">⌂</span>Dashboard</a>
+                <a href="#requests" class="nav-link" id="navRequests"><span class="nav-icon" aria-hidden="true">▤</span>All requests</a>
+                <a href="#create" class="nav-link" id="navCreateRequest"><span class="nav-icon" aria-hidden="true">＋</span>Create request</a>
+                <a href="#analytics" class="nav-link" id="navAnalytics"><span class="nav-icon" aria-hidden="true">▥</span>Analytics</a>
+                <a href="#notifications" class="nav-link" id="navNotifications"><span class="nav-icon" aria-hidden="true">♧</span>Notifications<span class="nav-count" id="sidebarUnreadCount" hidden>0</span></a>
+            </nav>
+            <p class="nav-label nav-label-lower">PREFERENCES</p>
+            <nav class="primary-nav" aria-label="Account navigation">
+                <a href="#profile" class="nav-link" id="navProfile"><span class="nav-icon" aria-hidden="true">◉</span>My profile</a>
+                <a href="#settings" class="nav-link" id="navSettings"><span class="nav-icon" aria-hidden="true">⚙</span>Settings</a>
+            </nav>
+            <div class="sidebar-account">
+                <span class="avatar" id="sidebarAvatar">A</span>
+                <span class="sidebar-user"><strong id="sidebarUsername">Administrator</strong><small id="sidebarRole">Administrator</small></span>
+                <button class="icon-button sidebar-logout" id="logoutButton" type="button" aria-label="Sign out" title="Sign out">↗</button>
             </div>
-            <div class="account-actions">
-                <span class="user-tag" id="userTag"></span>
-                <button class="logout-button" id="logoutButton" type="button">Sign out</button>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <button class="icon-button mobile-menu-button" id="mobileMenuToggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+                <div class="page-heading"><p class="eyebrow" id="pageEyebrow">OVERVIEW</p><h1 id="pageTitle">Dashboard</h1></div>
+                <div class="topbar-actions">
+                    <label class="search-box" for="quickSearch"><span aria-hidden="true">⌕</span><input id="quickSearch" type="search" placeholder="Search requests" autocomplete="off"></label>
+                    <button class="icon-button notification-button" id="notificationButton" type="button" aria-label="Open notifications" title="Notifications"><span aria-hidden="true">♧</span><span class="notification-dot" id="notificationDot" hidden></span></button>
+                    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Switch theme"><span aria-hidden="true" id="themeIcon">☾</span></button>
+                    <button class="profile-trigger" id="profileButton" type="button" aria-label="Open profile menu"><span class="avatar avatar-small" id="topAvatar">A</span><span id="topUsername">Administrator</span><span aria-hidden="true">⌄</span></button>
+                    <div class="profile-menu" id="profileMenu" hidden>
+                        <button type="button" id="profileMenuLink">My profile</button>
+                        <button type="button" id="profileLogout">Sign out</button>
+                    </div>
+                </div>
+            </header>
+
+            <p class="dashboard-error" id="dashboardError" role="alert" hidden></p>
+            <div class="view-stack">
+                <section class="page-view" id="viewDashboard">
+                    <div class="welcome-row"><div><p class="eyebrow">YOUR WORKSPACE</p><h2>Request overview</h2></div><button class="primary-button compact-button" id="dashboardCreateButton" type="button"><span aria-hidden="true">＋</span> New request</button></div>
+                    <section class="stats-grid" aria-label="Request statistics">
+                        <article class="stat-card"><span class="stat-icon blue-icon" aria-hidden="true">▤</span><p>Total requests</p><strong id="totalCount">0</strong><small>Across all statuses</small></article>
+                        <article class="stat-card"><span class="stat-icon amber-icon" aria-hidden="true">◷</span><p>Pending</p><strong id="pendingCount">0</strong><small>Awaiting resolution</small></article>
+                        <article class="stat-card"><span class="stat-icon green-icon" aria-hidden="true">✓</span><p>Completed</p><strong id="completedCount">0</strong><small>Resolved requests</small></article>
+                        <article class="stat-card"><span class="stat-icon red-icon" aria-hidden="true">↑</span><p>High priority</p><strong id="highPriorityCount">0</strong><small>Needs closer attention</small></article>
+                    </section>
+                    <section class="dashboard-grid">
+                        <article class="surface chart-surface"><div class="section-heading"><div><p class="eyebrow">REQUEST STATUS</p><h3>Progress at a glance</h3></div><button class="quiet-link" id="analyticsLink" type="button">View analytics <span aria-hidden="true">→</span></button></div><div class="status-chart" id="statusChart" aria-label="Pending and completed request chart"></div></article>
+                        <article class="surface priority-surface"><div class="section-heading"><div><p class="eyebrow">PRIORITY MIX</p><h3>Requests by priority</h3></div></div><div class="priority-chart" id="priorityChart" aria-label="Requests by priority chart"></div></article>
+                    </section>
+                    <section class="surface recent-surface"><div class="section-heading"><div><p class="eyebrow">LATEST ACTIVITY</p><h3>Recent requests</h3></div><button class="quiet-link" id="allRequestsLink" type="button">All requests <span aria-hidden="true">→</span></button></div><div class="table-wrapper"><table><thead><tr><th>Request ID</th><th>Requester</th><th>Request</th><th>Priority</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody id="recentRequestList"></tbody></table></div><div class="empty-state" id="recentEmpty" hidden><span class="empty-mark" aria-hidden="true">＋</span><strong>No requests yet</strong><p>Create a request to begin tracking work.</p><button class="quiet-link" id="emptyCreateButton" type="button">Create your first request <span aria-hidden="true">→</span></button></div></section>
+                </section>
+
+                <section class="page-view" id="viewRequests" hidden>
+                    <div class="welcome-row"><div><p class="eyebrow">WORK QUEUE</p><h2>All requests</h2><p class="view-description">Search, filter, and manage assistance requests.</p></div><button class="primary-button compact-button" id="requestsCreateButton" type="button"><span aria-hidden="true">＋</span> New request</button></div>
+                    <section class="surface request-surface"><div class="filter-row"><label class="filter-control"><span>Status</span><select id="filterStatus"><option value="">All statuses</option><option>Pending</option><option>Completed</option></select></label><label class="filter-control"><span>Priority</span><select id="filterPriority"><option value="">All priorities</option><option>Low</option><option>Medium</option><option>High</option></select></label><label class="filter-control"><span>Sort by</span><select id="sortRequests"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="title">Title A–Z</option><option value="priority">Priority</option></select></label><button class="text-button clear-filters" id="clearFilters" type="button">Clear filters</button></div><div class="table-wrapper"><table><thead><tr><th>Request ID</th><th>Requester</th><th>Request</th><th>Priority</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody id="requestList"></tbody></table></div><div class="empty-state" id="requestEmpty" hidden><span class="empty-mark" aria-hidden="true">⌕</span><strong id="requestEmptyTitle">No requests match</strong><p id="requestEmptyCopy">Try changing or clearing your filters.</p></div></section>
+                </section>
+
+                <section class="page-view" id="viewCreate" hidden>
+                    <div class="welcome-row"><div><p class="eyebrow">REQUEST WORKFLOW</p><h2 id="requestFormHeading">Create a request</h2><p class="view-description">Capture the details so the right work can begin.</p></div></div>
+                    <section class="surface form-surface"><form id="requestForm" class="request-form"><div class="form-intro"><span class="form-step">01</span><div><h3>Request details</h3><p>Fields marked required need to be completed.</p></div></div><label for="requester">Requester name <span aria-hidden="true">*</span></label><input id="requester" type="text" placeholder="Enter the requester's name" maxlength="120" required><label for="requestTitle">Request title <span aria-hidden="true">*</span></label><input id="requestTitle" type="text" placeholder="A short summary of the help needed" maxlength="180" required><label for="priority">Priority</label><select id="priority"><option>Low</option><option selected>Medium</option><option>High</option></select><div class="form-actions"><button class="primary-button" id="requestSubmitButton" type="submit">Create request</button><button class="secondary-button" id="cancelEditButton" type="button" hidden>Cancel</button></div></form></section>
+                </section>
+
+                <section class="page-view" id="viewAnalytics" hidden>
+                    <div class="welcome-row"><div><p class="eyebrow">INSIGHTS</p><h2>Request analytics</h2><p class="view-description">Charts reflect requests associated with your account.</p></div></div>
+                    <section class="dashboard-grid analytics-grid"><article class="surface chart-surface"><div class="section-heading"><div><p class="eyebrow">STATUS BREAKDOWN</p><h3>Pending vs completed</h3></div></div><div class="status-chart large-chart" id="analyticsStatusChart"></div></article><article class="surface priority-surface"><div class="section-heading"><div><p class="eyebrow">PRIORITY BREAKDOWN</p><h3>Requests by priority</h3></div></div><div class="priority-chart" id="analyticsPriorityChart"></div></article></section>
+                    <section class="surface activity-surface"><div class="section-heading"><div><p class="eyebrow">REQUEST HISTORY</p><h3>Activity over time</h3></div></div><div class="activity-chart" id="activityChart"></div><p class="chart-note" id="activityNote">Activity appears for requests with a recorded creation date.</p></section>
+                </section>
+
+                <section class="page-view" id="viewNotifications" hidden>
+                    <div class="welcome-row"><div><p class="eyebrow">UPDATES</p><h2>Notifications</h2><p class="view-description">Request events associated with your account.</p></div><button class="secondary-button" id="markAllReadButton" type="button">Mark all as read</button></div>
+                    <section class="surface notification-surface"><div id="notificationList"></div><div class="empty-state" id="notificationEmpty" hidden><span class="empty-mark" aria-hidden="true">♧</span><strong>You're all caught up</strong><p>New request activity will appear here.</p></div></section>
+                </section>
+
+                <section class="page-view" id="viewProfile" hidden>
+                    <div class="welcome-row"><div><p class="eyebrow">ACCOUNT</p><h2>My profile</h2><p class="view-description">Account details for your current session.</p></div></div>
+                    <section class="surface profile-surface"><div class="profile-identity"><span class="avatar profile-avatar" id="profileAvatar">A</span><div><h3 id="profileDisplayName">Administrator</h3><p id="profileAccountType">Administrator account</p></div></div><dl class="profile-details"><div><dt>Username</dt><dd id="profileUsername">—</dd></div><div><dt>Email</dt><dd id="profileEmail">Not configured</dd></div><div><dt>Sign-in method</dt><dd id="profileSignInMethod">Environment-configured credentials</dd></div><div><dt>Request storage</dt><dd id="profileRequestStorage">This browser only</dd></div></dl><button class="secondary-button" id="profileLogoutButton" type="button">Sign out</button></section>
+                </section>
+
+                <section class="page-view" id="viewSettings" hidden>
+                    <div class="welcome-row"><div><p class="eyebrow">PREFERENCES</p><h2>Settings</h2><p class="view-description">Adjust the appearance of your workspace.</p></div></div>
+                    <section class="surface settings-surface"><div class="setting-row"><div><h3>Appearance</h3><p>Choose the theme used on this browser.</p></div><label class="theme-select-label" for="themeSelect">Theme<select id="themeSelect"><option value="light">Light</option><option value="dark">Dark</option></select></label></div><div class="setting-row"><div><h3>Request storage</h3><p id="requestStorageDescription">Requests are stored in this browser.</p></div></div></section>
+                </section>
             </div>
-        </header>
-
-        <section class="stats">
-            <article class="stat-card">
-                <p>Total Requests</p>
-                <h2 id="totalCount">0</h2>
-            </article>
-            <article class="stat-card">
-                <p>Pending Requests</p>
-                <h2 id="pendingCount">0</h2>
-            </article>
-            <article class="stat-card">
-                <p>Completed Requests</p>
-                <h2 id="completedCount">0</h2>
-            </article>
-        </section>
-
-        <section class="panel" id="new-request">
-            <h2>Create Assistance Request</h2>
-            <form id="requestForm">
-                <label for="requester">Your name</label>
-                <input id="requester" type="text"
-                    placeholder="Enter your name" required>
-
-                <label for="requestTitle">Request title</label>
-                <input id="requestTitle" type="text"
-                    placeholder="e.g. Need help with a project" required>
-
-                <label for="priority">Priority</label>
-                <select id="priority">
-                    <option>Low</option>
-                    <option selected>Medium</option>
-                    <option>High</option>
-                </select>
-
-                <button type="submit">Add Request</button>
-            </form>
-        </section>
-
-        <section class="panel" id="requests">
-            <h2>Assistance Requests</h2>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Requester</th>
-                            <th>Request</th>
-                            <th>Priority</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="requestList">
-                        <tr>
-                            <td colspan="5">No requests yet. Add one above.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </main>
+        </main>
     </div>
 
+    <div class="dialog-backdrop" id="detailsDialog" hidden>
+        <section class="details-dialog" role="dialog" aria-modal="true" aria-labelledby="detailsTitle"><div class="dialog-heading"><div><p class="eyebrow">REQUEST DETAILS</p><h2 id="detailsTitle">Request</h2></div><button class="icon-button" id="closeDetailsButton" type="button" aria-label="Close request details">×</button></div><div id="detailContent"></div></section>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

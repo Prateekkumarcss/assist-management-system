@@ -8,6 +8,8 @@ import {
     handleSession,
     validateAuthConfiguration
 } from "./lib/auth.js";
+import { handleRegister } from "./api/register.js";
+import { handleRequests } from "./api/requests.js";
 
 const port = Number(process.env.PORT) || 3000;
 const projectDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -50,8 +52,14 @@ async function dispatchApi(request, response, handler) {
 const server = createServer(async (request, response) => {
     const pathname = new URL(request.url, "http://localhost").pathname;
 
-    if (pathname === "/api/login" || pathname === "/api/session") {
-        const handler = pathname === "/api/login" ? handleLogin : handleSession;
+    const apiHandlers = {
+        "/api/login": handleLogin,
+        "/api/session": handleSession,
+        "/api/register": handleRegister,
+        "/api/requests": handleRequests
+    };
+    if (apiHandlers[pathname]) {
+        const handler = apiHandlers[pathname];
         try {
             return await dispatchApi(request, response, handler);
         } catch (error) {
